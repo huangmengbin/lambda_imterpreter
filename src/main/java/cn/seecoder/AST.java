@@ -118,17 +118,17 @@ public abstract class AST {
 
     //-----------------------------以下为打印一棵不太好看的树
 
-    public void print_tree(){
+    public void print_tree(int tree_mode){
         calculate_node_distance();
         ArrayList<AST> to_print=new ArrayList<>();
         to_print.add(this);
-        print_lines(to_print);
+        print_lines(to_print,tree_mode);
     }
 
     protected abstract String node();
-    protected abstract String node(int mode);//  i<0;左边；   i>0;右边。
+    protected abstract String node(int left_or_right);//  i<0;左边；   i>0;右边。
 
-    private static void print_lines(ArrayList<AST> asts) {
+    private static void print_lines(ArrayList<AST> asts  ,  int print_mode ) {
 
         StringBuilder lines = new StringBuilder();
 
@@ -152,23 +152,28 @@ public abstract class AST {
 
 
         //开始打印了
-        int print_mode = 1;
+
 
         if(print_mode==0){
 
 
-        //要不要____/ \___
+        //1.要不要____/ \___
         for (int i = 0; i < lines.length(); i++) {
-            if (lines.charAt(i) == '-') {
-                if (i < lines.length() - 1 && lines.charAt(i + 1) == '^') {
+            if(i==0||i==lines.length()-1){
+                System.out.print(' ');
+            }
+            else if (lines.charAt(i) == '-') {
+                  if (lines.charAt(i + 1) == '^') {
                     System.out.print('/');
-                } else if (i > 0 && lines.charAt(i - 1) == '^') {
+                } else if (lines.charAt(i - 1) == '^') {
                     System.out.print('\\');
-                } else {
+                } else if ( lines.charAt(i-1)=='-'&&lines.charAt(i+1)=='-'){
                     System.out.print('_');
+                } else {
+                    System.out.print(' ');
                 }
             } else if (lines.charAt(i) == '^') {
-                System.out.print('^');//随便了
+                System.out.print('^');//-----------   '^' , ' ' 随便了
             } else {
                 System.out.print(' ');
             }
@@ -177,11 +182,11 @@ public abstract class AST {
 
 
 
-  //要不要  /  \
+  //2.要不要  /  \
         for (int i = 0; i < lines.length(); i++) {
-            if (i < lines.length() - 1 && lines.charAt(i + 1) == '-' && lines.charAt(i) != '^' && lines.charAt(i) != '-') {
+            if (i >0 && lines.charAt(i) == '-' && lines.charAt(i-1) != '-' && lines.charAt(i-1)!= '^' ) {
                 System.out.print('/');
-            } else if (i > 0 && lines.charAt(i - 1) == '-' && lines.charAt(i) != '^' && lines.charAt(i) != '-') {
+            } else if (i <lines.length() && lines.charAt(i)=='-' &&lines.charAt(i+1)!='-' && lines.charAt(i+1)!= '^') {
                 System.out.print('\\');
             } else {
                 System.out.print(' ');
@@ -237,7 +242,7 @@ public abstract class AST {
 
 
         if(to_continue){
-            print_lines(next_asts);
+            print_lines(next_asts,print_mode);
         }
 
     }

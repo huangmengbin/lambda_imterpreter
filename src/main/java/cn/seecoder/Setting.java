@@ -20,19 +20,25 @@ abstract class Setting {
             new_mode = oldmode & (-13);
             new_mode = new_mode | (+8);
         }
-        else if(string.equals("seecoder")){
+        else if(string.equals("seecoder")||string.equals("67")){
             new_mode=oldmode & (-4);
         }
-        else if(string.equals("simplified")||string.equalsIgnoreCase("simplify")){
+        else if(string.equals("simplified")||string.equalsIgnoreCase("simplify")||string.equals("s")){
             new_mode=oldmode & (-4);
             new_mode=new_mode | (+1);
         }
-        else if(string.equals("medium")){
+        else if(string.equals("medium")||string.equals("m")){
             new_mode=oldmode & (-4);
             new_mode=new_mode | (+2);
         }
-        else if(string.equals("full")){
+        else if(string.equals("full")|| string.equals("f")){
             new_mode=oldmode | (+3);
+        }
+        else if(string.equals("oblique")||string.equals("o")){
+            new_mode=oldmode & (-17) ;
+        }
+        else if(string.equals("vertical")||string.equals("v")){
+            new_mode = oldmode | 16;
         }
         else if(string.equals("check")){
             switch (oldmode&3){
@@ -59,6 +65,14 @@ abstract class Setting {
                 case 2:
                 case 3:
                     System.out.println("The  running-mode is : "+"getline");
+                    break;
+            }
+            switch ((oldmode>>4)&1){
+                case 0:
+                    System.out.println("The tree-printing mode is : "+"oblique");
+                    break;
+                case 1:
+                    System.out.println("The tree-printing mode is : "+"vertical");
                     break;
             }
             return oldmode;

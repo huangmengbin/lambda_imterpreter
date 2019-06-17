@@ -15,6 +15,7 @@ public class Main {
         int mode;
         int run_mode;
         int print_mode;
+        int tree_mode;
 
         try {
             File file=new File(mode_file_place);
@@ -28,6 +29,7 @@ public class Main {
 
         print_mode =  mode     & 3;
         run_mode   = (mode>>2) & 3;
+        tree_mode= (mode &16) >>4;
 
         Function.read(function_place);
 //-----------------------------------------分割线------------------------------
@@ -35,44 +37,56 @@ public class Main {
         Scanner in = new Scanner(System.in);
 
         while(true){
-            System.out.print("Lambda-> ");
 
-            source=in.nextLine().trim();
+            try {
 
-            if(source.equalsIgnoreCase("set")){
-                mode=Setting.set(mode,mode_file_place);
-                print_mode =mode & 3;
-                run_mode=(mode>>2)&3;
-            }
-            else if(source.equalsIgnoreCase("func")){
-                Function.func(function_place);
-            }
-            else if(source.equalsIgnoreCase("out")){
-                break;
-            }
-            else if(source.isEmpty()){
-                continue;
-            }
+                System.out.print("Lambda-> ");
 
-            else{//这时候认为它就是lambda表达式,开始工作了
-                try{
-                CheckLegal.checklegal(source);
-                source= Function.replace(source);
-                Lexer_Of_HMB lexer_of_hmb = new Lexer_Of_HMB(source);
-                Parser parser = new Parser(lexer_of_hmb);
-                Interpreter interpreter;
-                switch (run_mode) {
-                    //给seecoder的是 final + seecoder，即mode=3
-                    case 0:interpreter = new Interpreter(parser,print_mode);break;//final
-                    case 1:interpreter = new Interpreter_process(parser, print_mode);break;
-                    default:interpreter = new Interpreter_getline(parser, print_mode);break;
+                source = in.nextLine().trim();
+
+                if (source.equalsIgnoreCase("set")) {
+                    mode = Setting.set(mode, mode_file_place);
+                    print_mode = mode & 3;
+                    run_mode = (mode >> 2) & 3;
+                    tree_mode = (mode & 16) >> 4;
+                } else if (source.equalsIgnoreCase("function") || source.equals("func")) {
+                    Function.func(function_place);
+                } else if (source.equals("help")) {
+                    System.out.println(global.help);
+                } else if (source.equals("tip") || source.equals("tips")) {
+                    global.print_tip();
+                } else if (source.equalsIgnoreCase("quit") || source.equals("out")) {
+                    break;
+                } else if (source.isEmpty()) {
+                    continue;
+                } else {//这时候认为它就是lambda表达式,开始工作了
+                    try {
+                        CheckLegal.checklegal(source);
+                        source = Function.replace(source);
+                        Lexer_Of_HMB lexer_of_hmb = new Lexer_Of_HMB(source);
+                        Parser parser = new Parser(lexer_of_hmb);
+                        Interpreter interpreter;
+                        switch (run_mode) {
+                            //给seecoder的是 final + seecoder，即mode=3
+                            case 0:
+                                interpreter = new Interpreter(parser, print_mode, tree_mode);
+                                break;//final
+                            case 1:
+                                interpreter = new Interpreter_process(parser, print_mode, tree_mode);
+                                break;
+                            default:
+                                interpreter = new Interpreter_getline(parser, print_mode, tree_mode);
+                                break;
+                        }
+                        interpreter.eval();
+                    } catch (Exception e) {
+                        System.out.println("运行时错误");
+                        e.printStackTrace();
+                    }
                 }
-                interpreter.eval();
-                }
-                catch (Exception e){
-                    System.out.println("运行时错误");
-                    e.printStackTrace();
-                }
+
+            }catch (Exception e){
+                e.printStackTrace();
             }
         }
 

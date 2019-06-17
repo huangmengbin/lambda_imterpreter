@@ -4,10 +4,11 @@ import java.util.*;
 
 class Interpreter_getline extends Interpreter{
 
-    Interpreter_getline(Parser p,int print_mode){
+    Interpreter_getline(Parser p,int print_mode,int tree_mode){
         myast = p.parse();
         step=0;
         this.print_mode=print_mode;
+        this.tree_mode=tree_mode;
     }
     Interpreter_getline(){}
 
@@ -37,26 +38,30 @@ class Interpreter_getline extends Interpreter{
                         break;
                     case"out":
                         return null;
+                    case "67":
                     case "seecoder":
                         System.out.println(result.body.toString(0));
                         pause=true;
                         break;
+                    case "s":
                     case "simplify":
                     case "simplified":
                         System.out.println(result.body.toString(1));
                         pause=true;
                         break;
+                    case "m":
                     case "medium":
                         System.out.println(result.body.toString(2));
                         pause=true;
                         break;
+                    case "f":
                     case "full":
                         System.out.println(result.body.toString(3));
                         pause=true;
                         break;
                     case "t":
                     case "tree":
-                        result.body.print_tree();
+                        result.body.print_tree(tree_mode);
                         //(\67.\67NB. 67  (67 67NB))(\67666.\67NB. 67666(  67666 67NB))
                         pause=true;
                         break;
@@ -101,7 +106,7 @@ class Interpreter_getline extends Interpreter{
         System.out.println("\nThe answer is:\n"+result.body.toString(print_mode)+"\n");//
         System.out.println("You can press Enter to return.");
 
-       after_B_change(result.body,total);
+       after_B_change(result.body,total,tree_mode);
 
         return result.body;
     }

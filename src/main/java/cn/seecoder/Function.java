@@ -13,6 +13,7 @@ abstract class Function {
         String string = in.nextLine().trim().toLowerCase();
 
         switch (string){
+            case "initial":
             case "init":
                 key_value=init_key_value;
                 System.out.println("Success!");

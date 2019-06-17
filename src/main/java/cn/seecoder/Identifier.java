@@ -54,7 +54,6 @@ public class Identifier extends AST {
 
     //以下打印树
     protected String node(){
-        //System.out.print(" "+name+" ");
         return " "+name+" ";
     }
     protected String node(int mode){
