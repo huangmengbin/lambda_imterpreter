@@ -49,19 +49,19 @@ public class Main {
                     print_mode = mode & 3;
                     run_mode = (mode >> 2) & 3;
                     tree_mode = (mode & 16) >> 4;
-                } else if (source.equalsIgnoreCase("function") || source.equals("func")) {
+                } else if (source.equalsIgnoreCase("function") || source.equalsIgnoreCase("func")) {
                     Function.func(function_place);
-                } else if (source.equals("help")) {
+                } else if (source.equalsIgnoreCase("help")) {
                     System.out.println(global.help);
-                } else if (source.equals("tip") || source.equals("tips")) {
+                } else if (source.equalsIgnoreCase("tip") || source.equalsIgnoreCase("tips")) {
                     global.print_tip();
-                } else if (source.equalsIgnoreCase("quit") || source.equals("out")) {
+                } else if (source.equalsIgnoreCase("quit") || source.equalsIgnoreCase("out")) {
                     break;
                 } else if (source.isEmpty()) {
                     continue;
                 } else {//这时候认为它就是lambda表达式,开始工作了
                     try {
-                        CheckLegal.checklegal(source);
+                        CheckLegal.check_string(source);
                         source = Function.replace(source);
                         Lexer_Of_HMB lexer_of_hmb = new Lexer_Of_HMB(source);
                         Parser parser = new Parser(lexer_of_hmb);
@@ -92,27 +92,10 @@ public class Main {
 
         Function.write(function_place);
 
-        System.out.print("\nThanks for your using.\n");
+        System.out.print("\nThanks for your use.\n");
 
 
 
-/**
-        for(int i=6;i<=31; i++) {
-            String source = sources[i];
-            Lexer_Of_HMB lexer_of_hmb = new Lexer_Of_HMB(source);
-            Parser parser = new Parser(lexer_of_hmb);
-            Interpreter interpreter;
-            switch (run_mode) {
-                case 0:interpreter = new Interpreter(parser);break;//默认为0，给seecoder
-                case 1:interpreter = new Interpreter_process(parser, print_mode);break;
-                default:interpreter = new Interpreter_getline(parser, print_mode);break;
-            }
-            System.out.println("初步的树:"+interpreter.myast.toString(print_mode)+"\n");
-            AST result = interpreter.eval();
-            System.out.println(i+". 最终:" + result.toString(print_mode)+"\n\n\n");
-
-        }
-*/
     }
 
 //------------------------------------完了---------------------------------

@@ -15,9 +15,15 @@ public class Lexer_Of_HMB {
 
     Lexer_Of_HMB(String source) {
         this.init(source.trim());
-        //System.out.println("加括号前："+this.toString());//打印加括号前的
+        try {
+            CheckLegal.check_tokens(my_token);
+        }catch (Exception e){
+            my_token.clear();
+            my_token.add("wrong");
+            my_token.add("input");
+            e.printStackTrace();
+        }
         my_token=full_parenthesis().my_token;//额 加全括号
-        //System.out.println("加括号后："+this.toString());//打印加括号后的
         index = 0;
     }
     Lexer_Of_HMB(){}//什么是构造器？？？
@@ -95,11 +101,12 @@ public class Lexer_Of_HMB {
 
 //--------------------------------下面都是加括号---------------------------------------
     public int match(int left) {
-    if (my_token.get(left) == lambda||my_token.get(left)==right_parenthesis||my_token.get(left)==dot) {
+
+    if (my_token.get(left).equals(lambda)||my_token.get(left).equals(right_parenthesis)||my_token.get(left).equals(dot)) {
         System.out.println("wrong");
     }
 
-    if(my_token.get(left)!=left_parenthesis){
+    if( !  my_token.get(left).equals(left_parenthesis)){
         return left;
     }
 
@@ -107,9 +114,9 @@ public class Lexer_Of_HMB {
     int number = 0;
     do {
         ++right;
-        if (my_token.get(right) == left_parenthesis) {
+        if (my_token.get(right).equals(left_parenthesis)) {
             number++;
-        } else if (my_token.get(right) == right_parenthesis) {
+        } else if (my_token.get(right).equals(right_parenthesis)) {
             number--;
         }
 
