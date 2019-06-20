@@ -4,7 +4,7 @@ import java.util.*;
 
 //final
 
-public class Interpreter {//final模式
+public class Interpreter {//final模式，如果不需要git到seecoder可以加一个接口
     AST myast;
     int print_mode ;
     int tree_mode;
@@ -40,7 +40,7 @@ public class Interpreter {//final模式
             total++;
         }
 
-        if(global.to_seecoder){
+        if(global.to_seecoder){//额。。。提交时还是要
             Map<String,Integer>map=new HashMap<>();
             result.changeToSeecoder(map);
         }

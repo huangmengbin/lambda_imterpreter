@@ -7,7 +7,7 @@ import java.util.*;
 abstract class Function {
 
 
-    static void func (String function_place){
+    static void func (String function_place)throws Exception{
         System.out.print("function: ");
         Scanner in=new Scanner(System.in);
         String string = in.nextLine().trim().toLowerCase();
@@ -73,9 +73,9 @@ abstract class Function {
     }
 
 
-    static private void define(){
+    static private void define()throws Exception{
         Scanner in = new Scanner(System.in);
-        System.out.print("number=");
+        System.out.print("number= ");
         int number1;
         try {
             number1 = in.nextInt();
@@ -85,12 +85,16 @@ abstract class Function {
         }
         catch (Exception e){
             number1=key_value.size()/2-1;
+            System.out.println("默认：添加至末尾");
         }
         in.nextLine();
         System.out.print("Your function name is: ");
         String function_name;
         do {
             function_name = in.nextLine().trim();
+            if(function_name.length()>20){
+                throw new  Exception("函数名字不要超过20个字符");
+            }
         }while (function_name.isEmpty());
         System.out.print("Your function define is: ");
         String function_define;
@@ -105,18 +109,35 @@ abstract class Function {
     static private void print(){
         for (int i=0;i<key_value.size();i+=2){
             System.out.println((i/2)+":\t"+
-                    key_value.get(i)+"\t\t"+
+                    key_value.get(i)
+                    +print_space(21-key_value.get(i).length())+
                     key_value.get(i+1));
         }
     }
 
-    static private void delete(){
+    static private String print_space(int len){
+        StringBuilder res=new StringBuilder();
+        for(int i=0;i<len;i++){
+            res.append(' ');
+        }
+        return res.toString();
+    }
+
+
+
+    static private void delete()throws Exception{
         Scanner in = new Scanner(System.in);
         System.out.print("number=");
-        int number2=in.nextInt();
-        key_value.remove(number2*2);
-        key_value.remove(number2*2);
-        System.out.println("Success!");
+        try {
+            int number2 = in.nextInt();
+            key_value.remove(number2 * 2);
+            key_value.remove(number2 * 2);
+            System.out.println("Success!");
+        }
+        catch (Exception e){
+            throw new Exception("无法删除");
+        }
+
     }
 
     private static ArrayList<String> init_key_value= new ArrayList<>(
@@ -151,16 +172,20 @@ abstract class Function {
                     "LEQ", "(\\m.(\\n.(ISZERO((SUBm)n))))",
                     "EQ", "(\\m.(\\n.((AND((LEQm)n))((LEQn)m))))",
                     "LEQ", "(\\m.(\\n.(ISZERO((SUBm)n))))",
-                    "FACT1", "(\\a.(\\b.((((b(\\t.(\\d.(\\e.e))))(\\i.(\\j.i)))(\\k.(\\l.(k l))))(\\p.(b(((a a)(\\r.(\\s.(((b(\\g.(\\w.(w(g r)))))(\\y.s))(\\z.z)))))p))))))",
+                    "FACT1", "(\\f.(\\n.(((ISZEROn)ONE)((MULTn)((f f)(PREDn))))))",
                     "FACT", "(FACT1FACT1)",
                     "FACT1", "(\\f.(\\n.(((ISZEROn)ONE)((MULTn)((f f)(PREDn))))))",
+                    "YYY","((\\g.(\\x.g(x x)))(\\x.g(x x)))",
+                    "FACT2", "(\\f.(\\n.(((ISZEROn)ONE)((MULTn)(   f (PREDn))))))",
+                    "FACTY","YYY FACT2",
                     "MAX", "(\\x.(\\y.(((IF((LEQx)y))y)x)))",
                     "MIN", "(\\x.(\\y.(((IF((LEQx)y))x)y)))",
                     "CDR", "(\\p.(pFALSE))",
                     "CAR", "(\\p.(pTRUE))",
                     "CONS", "(\\x.(\\y.(\\f.((f x)y))))",
                     "NULL", "(\\p.(p(\\x.(\\y.FALSE))))",
-                    "NIL", "(\\x.TRUE)"     ));
+                    "NIL", "(\\x.TRUE)"
+                    ));
 
     private static ArrayList<String> key_value=new ArrayList<>();
 }

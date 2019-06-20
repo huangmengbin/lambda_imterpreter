@@ -53,10 +53,10 @@ public class Identifier extends AST {
 
 
     //以下打印树
-    protected String node(){
+    protected String node_toString(){
         return " "+name+" ";
     }
-    protected String node(int mode){
+    protected String node_toString(int mode){
         if(mode<0){
             return " "+name+"-";
         }
@@ -70,4 +70,7 @@ public class Identifier extends AST {
         right_distance=1;
         return this.name.length()+2;
     }
+
+    protected Identifier clone(){
+        return new Identifier(this.name);}
 }

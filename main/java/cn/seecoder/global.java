@@ -30,7 +30,7 @@ class global {
             "   AST树打印模式：oblique , vertical\n" +
             "   check:查看当前模式\n" +
             "function：修改或查看你的函数\n" +
-            "   add：添加一个新的\n" +
+            "   add：添加一个新的至指定位置\n" +
             "   delete：删除某个函数\n" +
             "   initial：还原成默认\n" +
             "   check：查看\n" +
@@ -55,7 +55,7 @@ class global {
         for(String i:tip){
             while (!scanner.nextLine().equals("")){
                 System.out.println("wrong input!");
-            };
+            }
             System.out.print(i);
         }
     }
@@ -72,8 +72,9 @@ class global {
             "",
             "第一次使用时可能还没有mode文件以及function文件,但是不必担心\n",
             "只要你去设置模式或修改函数,理论上它是会自动生成的\n",
+            "比如试下输入 func \\n init \\n \n",
             "",
-            "set func 以及lambda表达式 最好要看到 “Lambda-> ”时再输入\n",
+            "set，func，help,tip 以及lambda表达式 最好要看到 “Lambda-> ”时再输入\n",
             "不然会报错\n",
             "",
             "",

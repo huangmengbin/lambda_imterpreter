@@ -11,7 +11,7 @@ public class Lexer_Of_HMB {
     static final String dot = global.dot;
 
     int index=0;
-    ArrayList<String> my_token = new ArrayList<>();
+    protected ArrayList<String> my_token = new ArrayList<>();
 
     Lexer_Of_HMB(String source) {
         this.init(source.trim());
@@ -45,7 +45,6 @@ public class Lexer_Of_HMB {
                     break;
                 case (' '):
                     break;
-
                 default:
                     int old_index = i;//会溢出，比如以字母结尾而不是右括号的情况
                     try {
@@ -81,14 +80,12 @@ public class Lexer_Of_HMB {
         return result.toString();
     }
 
-    String getValue(){
+
+    public String getValue(){
         return my_token.get(this.index);
     }
-    String getValue(int index){
+    public String getValue(int index){
         return my_token.get(index);
-    }
-    String getNext(int next){
-        return my_token.get(next+index);
     }
     int lenth() {
         return my_token.size();
@@ -103,7 +100,7 @@ public class Lexer_Of_HMB {
     public int match(int left) {
 
     if (my_token.get(left).equals(lambda)||my_token.get(left).equals(right_parenthesis)||my_token.get(left).equals(dot)) {
-        System.out.println("wrong");
+        System.out.println("wrong:"+my_token.get(left));
     }
 
     if( !  my_token.get(left).equals(left_parenthesis)){
@@ -131,17 +128,13 @@ public class Lexer_Of_HMB {
 
     public Lexer_Of_HMB subLexer(int left, int rihgt) {
         ArrayList<String>temp=new ArrayList<>();
-        temp.addAll(my_token.subList(left,rihgt));
+        temp.addAll (my_token.subList(left,rihgt));
         return new Lexer_Of_HMB(temp);
     }
 
     public void add_a_parenthesis(){
-        ArrayList<String>temp=new ArrayList<>();
-        temp.add(left_parenthesis);
-        temp.addAll(my_token);
-        temp.add(right_parenthesis);
-        my_token=temp;
-        this.index=0;
+        my_token.add(0,left_parenthesis);
+        my_token.add(right_parenthesis);
     }
 
     public void connect(Lexer_Of_HMB a){
@@ -149,7 +142,7 @@ public class Lexer_Of_HMB {
         this.index=0;
     }
 
-    protected Lexer_Of_HMB full_parenthesis() {
+    protected Lexer_Of_HMB full_parenthesis() {//好吧 这才是真正的加括号
         index=0;
         if(!getValue(0).equals(left_parenthesis)){
             if(lenth()==1) {

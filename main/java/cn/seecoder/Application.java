@@ -16,32 +16,36 @@ public class Application extends AST{
 
         boolean have_found=false;
 
-        if(left_son.can_be_replace()){
-            have_found=true;
-            left_son =((Application) left_son).B_replace();
+        //顺序是可调的，因为真的不懂怎么搞
+
+        if(!have_found && left_son.can_be_replace()){
+            have_found=true;//find         //and
+            left_son =((Application) left_son).B_replace();//B change
         }
 
-        if((left_son instanceof Abstraction || left_son instanceof Application )&&!have_found){
-            if( left_son.find_and_B_change()){
-                have_found=true;
-            }
+        if(!have_found && !(left_son instanceof Identifier)){
+            have_found=left_son.find_and_B_change();
         }
 
-        if(right_daughter.can_be_replace()&&!have_found){
+
+        if(!have_found && right_daughter.can_be_replace()){
             have_found=true;
             right_daughter =((Application) right_daughter).B_replace();
         }
 
-        if ((right_daughter instanceof Abstraction || right_daughter instanceof Application)&&!have_found ){
-            if( right_daughter.find_and_B_change()){
-                have_found=true;
-            }
+        if (!have_found && !(right_daughter instanceof Identifier)){
+            have_found=right_daughter.find_and_B_change();
         }
+
+
+
+
+
 
         return have_found;
     }
 
-    public AST B_replace(){//B替换第0步，
+    protected AST B_replace(){//B替换第0步，
         if(! (left_son instanceof Abstraction) ) {
             System.out.println("B规约出现bug");
             return this;
@@ -60,9 +64,8 @@ public class Application extends AST{
 
             else {
                 Lexer_Of_HMB lexer = right_daughter.toLexer();
-                Parser p=new Parser(lexer);
                 Lexer_Of_HMB bodyLexer=((Abstraction) left_son).body.toLexer();
-                ((Abstraction) left_son).body.B_replace1(lexer,bodyLexer,p,label);//进入了B替换第1步
+                ((Abstraction) left_son).body.B_replace1(lexer,bodyLexer,right_daughter.clone(),label);//进入了B替换第1步
                 return ((Abstraction) left_son).body;
             }
 
@@ -83,7 +86,7 @@ public class Application extends AST{
             case 1:
                 StringBuilder temp1=new StringBuilder(left_son.toString(mode));
                 StringBuilder temp2=new StringBuilder(right_daughter.toString(mode));
-                if(right_daughter instanceof Application || right_daughter instanceof Abstraction){
+                if( ! (right_daughter instanceof Identifier) ){
                     temp2.insert(0,"(");
                     temp2.append(")");
                 }
@@ -94,6 +97,7 @@ public class Application extends AST{
                 return temp1.toString()+" "+temp2.toString();
 
             case 2:
+                return "("+ left_son.toString(mode)+" "+ right_daughter.toString(mode)+")";
             case 3:
                 return "("+ left_son.toString(mode)+" "+ right_daughter.toString(mode)+")";
             default:
@@ -118,14 +122,14 @@ public class Application extends AST{
 
     //以下打印树,可移植性很低
     private final static String symbol="[APP]";
-    protected String node(){
+    protected String node_toString(){
         StringBuilder result=new StringBuilder();
         for(int i=0;i<left_distance;i++)result.append(' ');
         result.append(symbol);
         for(int i=0;i<right_distance;i++)result.append(' ');
         return result.toString();
     }
-    protected String node(int mode){
+    protected String node_toString(int mode){
         StringBuilder result=new StringBuilder();
         if(mode<0) {
             for (int i = 0; i < left_distance; i++) result.append(' ');
@@ -144,5 +148,10 @@ public class Application extends AST{
         left_distance=left_son.calculate_node_distance();
         right_distance=right_daughter.calculate_node_distance();
         return left_distance+right_distance+symbol.length();//长度
+    }
+
+
+    protected AST clone(){
+        return new Application(left_son.clone(),right_daughter.clone());
     }
 }

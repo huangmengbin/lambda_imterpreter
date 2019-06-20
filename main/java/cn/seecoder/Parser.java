@@ -6,7 +6,6 @@ import java.util.Map;
 
 public class Parser {
 
-    //static int mode=global.mode;
 
     static final private String left_parenthesis=global.left_parenthesis;
     static final private String right_parenthesis=global.right_parenthesis;
@@ -21,33 +20,35 @@ public class Parser {
 
     AST parse(){//来构建树了
 
-        AST ast = term(lexer);
+
         try {
-            Lexer_Of_HMB templexer = ast.toLexer();
-            ast = term(templexer);
+            AST ast = term(lexer);
 
             if (global.to_seecoder) {
                 Map<String, Integer> map = new HashMap<>();
                 ast.changeToSeecoder(map);
             }
+            return ast;
 
         }catch (Exception e){
             System.out.println("构建树时出错");
             e.printStackTrace();
         }
-        return ast;
+        return null;
     }
 
-    private AST term(Lexer_Of_HMB lexer){
+    private AST term(Lexer_Of_HMB lexer)throws Exception{
+
+
 
         switch (lexer.getValue(0)) {
-            case left_parenthesis:
+            case left_parenthesis:          //这个效率很低的
 
 //-------------------------------------------------------------------------------------
-/**/                        switch (lexer.getNext(1)) {
+                        switch (lexer.getValue(1)) {
                             case lambda:
                                 return new Abstraction
-                                        (new Identifier(lexer.getNext(2)),
+                                        (new Identifier(lexer.getValue(2)),
                                                 term(lexer.subLexer(4, lexer.match(4) + 1)));
                             case left_parenthesis:
                                 int temp1 = lexer.match(1) + 1;
@@ -57,21 +58,19 @@ public class Parser {
                                         term(lexer.subLexer(temp1, temp2)));
                             default:
                                 return new Application(
-                                        new Identifier(lexer.getNext(1)),
+                                        new Identifier(lexer.getValue(1)),
                                         term(lexer.subLexer(2, lexer.match(2) + 1)));
                             }
 //------------------------------------------------------------------------------------
             case right_parenthesis://理论上是不会遇到的
-                System.out.println("wr");
-                return null;
+                throw new Exception("))");
             case lambda://理论上是不会遇到的
-                System.out.println("wl");
-                return null;
+                throw new Exception("\\\\");
             case dot://理论上是不会遇到的
-                System.out.println("wd");
-                return null;
+                throw new Exception("...");
             default://普通的string
                 return new Identifier(lexer.getValue());
             }
+
     }
 }

@@ -15,16 +15,21 @@ public class Abstraction extends AST {
 
     public boolean find_and_B_change(){
         boolean have_found=false;
-        if (body.can_be_replace()){
+
+
+        if (body.can_be_replace()&&!have_found){
             have_found=true;
             body=((Application)body).B_replace();
         }
+
 
         if(!have_found ){
             if(body.find_and_B_change()){
                 have_found=true;
             }
         }
+
+
 
         return have_found;
     }
@@ -45,10 +50,10 @@ public class Abstraction extends AST {
         switch (mode){
             case 1:
                 if(body instanceof Application){
-                    return "\\"+param.toString(mode)+".("+body.toString(mode)+")";
+                    return "\\"+param.toString(mode)+"."+body.toString(mode)+"";
                 }
             case 2:
-                return "\\"+param.toString(mode)+"."+body.toString(mode);      //不太完整的括号
+                return "\\"+param.toString(mode)+"."+body.toString(mode)+"";      //不太完整的括号
             case 3:
                 return "(\\"+param.toString(mode)+"."+body.toString(mode)+")";//完完整整的括号
             default:
@@ -68,6 +73,11 @@ public class Abstraction extends AST {
         return lexer;
     }
 
+
+    protected AST clone(){
+        return new Abstraction(param.clone(),body.clone());
+    }
+
     public void changeToSeecoder(Map<String,Integer> map){
         Map<String,Integer>map1=new HashMap<>();
         for (String key :map.keySet()) {
@@ -80,14 +90,14 @@ public class Abstraction extends AST {
 
     //以下打印树
     private final static String symbol="[Abs]";
-    protected String node(){
+    protected String node_toString(){
         StringBuilder result=new StringBuilder();
         for(int i=0;i<left_distance;i++)result.append(' ');
         result.append(symbol);
         for(int i=0;i<right_distance;i++)result.append(' ');
         return result.toString();
     }
-    protected String node(int mode){
+    protected String node_toString(int mode){
         StringBuilder result=new StringBuilder();
         if(mode<0) {
             for (int i = 0; i < left_distance; i++) result.append(' ');

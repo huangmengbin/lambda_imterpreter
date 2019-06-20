@@ -16,8 +16,6 @@ public abstract class AST {
 
     public abstract boolean find_and_B_change();//寻找规约的地方，并将其规约
 
-    public abstract void changeToSeecoder(Map<String,Integer> map);
-
     public abstract Lexer_Of_HMB toLexer();
 
     boolean can_be_replace(){
@@ -27,7 +25,7 @@ public abstract class AST {
 
     protected abstract void a_change (String oldString , String newString, boolean shold_replace);
 
-    void B_replace1(Lexer_Of_HMB lexer, Lexer_Of_HMB bodylexer, Parser p, String label){
+    void B_replace1(Lexer_Of_HMB lexer, Lexer_Of_HMB bodylexer, AST ast, String label){
         //先发现需要a替换的位置
         ArrayList<String>temp1=new ArrayList<>();
         ArrayList<String>conflict=new ArrayList<>();
@@ -68,27 +66,27 @@ public abstract class AST {
             }
         }
 
-        this.B_replace2(p,label);//开始B替换第二步
+        this.B_replace2(ast,label);//开始B替换第二步
     }
 
-    private void B_replace2(Parser p, String label){
+    private void B_replace2(AST ast, String label){
 
         if (this instanceof Application){//1.
             if(((Application) this).left_son instanceof Identifier){
                 if(((Identifier) ((Application) this).left_son).name  .equals(label) ){
-                    ((Application) this).left_son =p.parse();
+                    ((Application) this).left_son =ast.clone();
                 }
             }
             else {
-                ((Application) this).left_son.B_replace2(p, label);
+                ((Application) this).left_son.B_replace2(ast, label);
             }
             if(((Application) this).right_daughter instanceof Identifier){
                 if(((Identifier) ((Application) this).right_daughter).name  .equals(label)){
-                    ((Application) this).right_daughter =p.parse();
+                    ((Application) this).right_daughter =ast.clone();
                 }
             }
             else {
-                ((Application) this).right_daughter.B_replace2(p, label);
+                ((Application) this).right_daughter.B_replace2(ast, label);
             }
         }
 
@@ -98,11 +96,11 @@ public abstract class AST {
 
                 if(((Abstraction) this).body instanceof Identifier){
                     if(((Identifier) ((Abstraction) this).body).name   .equals(label)){
-                        ((Abstraction) this).body=p.parse();
+                        ((Abstraction) this).body=ast.clone();
                     }
                 }
                 else {
-                    ((Abstraction) this).body.B_replace2(p, label);
+                    ((Abstraction) this).body.B_replace2(ast, label);
                 }
             }
         }
@@ -113,7 +111,7 @@ public abstract class AST {
 
     }
 
-
+    public abstract void changeToSeecoder(Map<String,Integer> map);
 
 
     //-----------------------------以下为打印一棵不太好看的树
@@ -125,8 +123,8 @@ public abstract class AST {
         print_lines(to_print,tree_mode);
     }
 
-    protected abstract String node();
-    protected abstract String node(int left_or_right);//  i<0;左边；   i>0;右边。
+    protected abstract String node_toString();
+    protected abstract String node_toString(int left_or_right);//  i<0;左边；   i>0;右边。
 
     private static void print_lines(ArrayList<AST> asts  ,  int print_mode ) {
 
@@ -136,9 +134,9 @@ public abstract class AST {
         int left_or_right = 1;
         for (int i = 0; i < asts.size(); i++) {
             if (is_space(asts.get(i)) || (i == asts.size() - 1 && left_or_right > 0)) {
-                lines.append(asts.get(i).node());
+                lines.append(asts.get(i).node_toString());
             } else {
-                lines.append(asts.get(i).node(left_or_right = -left_or_right));
+                lines.append(asts.get(i).node_toString(left_or_right = -left_or_right));
                 number++;//只有这种非空的才算入number里面
             }//第一次为-1，左
             if (!is_space(asts.get(i)) &&
@@ -258,5 +256,6 @@ public abstract class AST {
 
     abstract int calculate_node_distance();
 
+    protected abstract AST clone();//不知怎么的突然想写这个，感觉比之前的快多了
 
 }
