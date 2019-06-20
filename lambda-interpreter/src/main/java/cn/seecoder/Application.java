@@ -72,11 +72,12 @@ class Application extends AST{
 
         //顺序是可调的，因为真的不懂怎么搞
 
-        if(!have_found && lhs.can_be_replace()){
-            have_found=true;//find         //and
-            lhs =((Application) lhs).B_replace();//B change
+        if(!have_found && lhs.can_be_replace()) {
+            have_found = true;//find         //and
+            //if (!((Abstraction) (((Application) lhs).lhs)).body.find_and_B_change()) {
+                lhs = ((Application) lhs).B_replace();
+            //}
         }
-
 
         if(!have_found && !(lhs instanceof Identifier)){
             have_found= lhs.find_and_B_change();
@@ -85,7 +86,9 @@ class Application extends AST{
 
         if(!have_found && rhs.can_be_replace()){
             have_found=true;
-            rhs =((Application) rhs).B_replace();
+            //if (!((Abstraction) (((Application) rhs).lhs)).body.find_and_B_change()) {
+                rhs = ((Application) rhs).B_replace();
+            //}
         }
 
         if (!have_found && !(rhs instanceof Identifier)){

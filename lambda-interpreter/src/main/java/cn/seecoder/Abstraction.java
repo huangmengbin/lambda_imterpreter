@@ -66,7 +66,9 @@ class Abstraction extends AST {
 
         if (body.can_be_replace()&&!have_found){
             have_found=true;
-            body=((Application)body).B_replace();
+            //if (!((Abstraction) (((Application) body).lhs)).body.find_and_B_change()) {
+                body = ((Application) body).B_replace();
+            //}
         }
 
 

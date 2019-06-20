@@ -159,6 +159,8 @@ abstract class Function {
         key_value.remove(number1*2+1);
         key_value.add(number1*2+1,function_define);
 
+
+
     }
 
     static private void print(){
@@ -211,19 +213,22 @@ abstract class Function {
                     "LEQ", "(\\m.(\\n.(ISZERO((SUBm)n))))",
                     "EQ", "(\\m.(\\n.((AND((LEQm)n))((LEQn)m))))",
                     "LEQ", "(\\m.(\\n.(ISZERO((SUBm)n))))",
-                    "FACT1", "(\\f.(\\n.(((ISZEROn)ONE)((MULTn)((f f)(PREDn))))))",
+                    "FACT1","(\\f.(\\n.((((n (\\t.(\\u.(\\v.v)))) (\\u.(\\v.u))) (\\f.(\\x.(f x)))) (\\b.(n (((f f) (\\f.(\\x.(((n (\\g.(\\h.(h (g f))))) (\\u.x)) (\\v.v))))) b))))))",
                     "FACT", "(FACT1FACT1)",
                     "FACT1", "(\\f.(\\n.(((ISZEROn)ONE)((MULTn)((f f)(PREDn))))))",
-                    "YYY","((\\g.(\\x.g(x x)))(\\x.g(x x)))",
-                    "FACT2", "(\\f.(\\n.(((ISZEROn)ONE)((MULTn)(   f (PREDn))))))",
+                    "YYY","(\\g.((\\x.g(x x))(\\x.g(x x))))",
+                    "FACT2","(\\f.(\\n.((((n (\\t.(\\u.(\\v.v)))) (\\u.(\\v.u))) (\\f.(\\x.(f x)))) (\\b.(n ((f (\\f.(\\x.(((n (\\g.(\\h.(h (g f))))) (\\u.x)) (\\v.v))))) b))))))",
                     "FACTY","YYY FACT2",
+                    "FACT2","(\\f.(\\n.(((ISZEROn)ONE)((MULTn)(f(PREDn))))))",
                     "MAX", "(\\x.(\\y.(((IF((LEQx)y))y)x)))",
                     "MIN", "(\\x.(\\y.(((IF((LEQx)y))x)y)))",
                     "CDR", "(\\p.(pFALSE))",
                     "CAR", "(\\p.(pTRUE))",
                     "CONS", "(\\x.(\\y.(\\f.((f x)y))))",
                     "NULL", "(\\p.(p(\\x.(\\y.FALSE))))",
-                    "NIL", "(\\x.TRUE)"
+                    "NIL", "(\\x.TRUE)",
+                    "LENGTH","(YYY(\\g.\\c.\\x.NULL x c (g (SUCC c)(CDR x)))ZERO)"
+
                     ));
 
     private static ArrayList<String> key_value=new ArrayList<>();
