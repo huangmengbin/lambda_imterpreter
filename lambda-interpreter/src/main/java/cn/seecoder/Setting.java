@@ -4,6 +4,8 @@ import java.io.FileWriter;
 import java.util.Scanner;
 
 abstract class Setting {
+    //mode用了一堆位运算符。。。
+    //具体含义可以看看print
     static int set(int oldmode,String mode_file_place){
         System.out.print("Setting: ");
         int new_mode;
@@ -69,10 +71,10 @@ abstract class Setting {
             }
             switch ((oldmode>>4)&1){
                 case 0:
-                    System.out.println("The tree-printing mode is : "+"oblique");
+                    System.out.println("The tree-printing-mode is : "+"oblique");
                     break;
                 case 1:
-                    System.out.println("The tree-printing mode is : "+"vertical");
+                    System.out.println("The tree-printing-mode is : "+"vertical");
                     break;
             }
             return oldmode;
@@ -94,7 +96,7 @@ abstract class Setting {
             }
         }
         else {
-            System.out.println("No modification");
+            System.out.println("No modification！！！");
         }
         return new_mode;
     }

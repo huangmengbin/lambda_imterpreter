@@ -4,8 +4,8 @@ import java.util.*;
 import java.lang.*;
 public abstract class AST {
 
-    protected int left_distance;
-    protected  int right_distance;
+    int left_distance;
+    int right_distance;
 
 
     private final String[] alphabet=global.alphabet;
@@ -20,18 +20,20 @@ public abstract class AST {
 
     boolean can_be_replace(){
         return this instanceof Application &&
-                ((Application) this).left_son instanceof Abstraction;
+                ((Application) this).lhs instanceof Abstraction;
     }
 
     protected abstract void a_change (String oldString , String newString, boolean shold_replace);
 
-    void B_replace1(Lexer_Of_HMB lexer, Lexer_Of_HMB bodylexer, AST ast, String label){
+    void B_replace1(Lexer_Of_HMB rhs_lexer, Lexer_Of_HMB bodylexer, AST ast, String label){
+        //功能是
+
         //先发现需要a替换的位置
         ArrayList<String>temp1=new ArrayList<>();
         ArrayList<String>conflict=new ArrayList<>();
         ArrayList<String>allString=new ArrayList<>();
 
-        for(String i: lexer.my_token){
+        for(String i: rhs_lexer.my_token){
             if(!temp1.contains(i) &&  Lexer_Of_HMB.isLCID(i)  &&  !i.equals(label)){
                 temp1.add(i);
             }
@@ -47,8 +49,8 @@ public abstract class AST {
         }
 
         for (String i : temp1){
-            if(!conflict.contains(i) && bodylexer.my_token.contains(i)){
-                conflict.add(i);
+            if(!conflict.contains(i) && bodylexer.my_token.contains(i)){//发现了字母冲突的地方
+                conflict.add(i);//那就把它加进去
             }
         }
 
@@ -68,25 +70,25 @@ public abstract class AST {
 
         this.B_replace2(ast,label);//开始B替换第二步
     }
-
+    //实际上B_replace1,B_replace2可以写在interpreter里头，会更清晰
     private void B_replace2(AST ast, String label){
-
+        //我们要把很多东西替成传进来的那个AST
         if (this instanceof Application){//1.
-            if(((Application) this).left_son instanceof Identifier){
-                if(((Identifier) ((Application) this).left_son).name  .equals(label) ){
-                    ((Application) this).left_son =ast.clone();
+            if(((Application) this).lhs instanceof Identifier){
+                if(((Identifier) ((Application) this).lhs).name  .equals(label) ){
+                    ((Application) this).lhs =ast.clone();
                 }
             }
             else {
-                ((Application) this).left_son.B_replace2(ast, label);
+                ((Application) this).lhs.B_replace2(ast, label);
             }
-            if(((Application) this).right_daughter instanceof Identifier){
-                if(((Identifier) ((Application) this).right_daughter).name  .equals(label)){
-                    ((Application) this).right_daughter =ast.clone();
+            if(((Application) this).rhs instanceof Identifier){
+                if(((Identifier) ((Application) this).rhs).name  .equals(label)){
+                    ((Application) this).rhs =ast.clone();
                 }
             }
             else {
-                ((Application) this).right_daughter.B_replace2(ast, label);
+                ((Application) this).rhs.B_replace2(ast, label);
             }
         }
 
@@ -111,12 +113,12 @@ public abstract class AST {
 
     }
 
-    public abstract void changeToSeecoder(Map<String,Integer> map);
+    public abstract void change_to_seecoder(Map<String,Integer> map);
 
 
     //-----------------------------以下为打印一棵不太好看的树
 
-    public void print_tree(int tree_mode){
+    void print_tree(int tree_mode){
         calculate_node_distance();
         ArrayList<AST> to_print=new ArrayList<>();
         to_print.add(this);
@@ -126,25 +128,25 @@ public abstract class AST {
     protected abstract String node_toString();
     protected abstract String node_toString(int left_or_right);//  i<0;左边；   i>0;右边。
 
-    private static void print_lines(ArrayList<AST> asts  ,  int print_mode ) {
+    private static void print_lines(ArrayList<AST> ast_list  ,  int print_tree_mode ) {
 
-        StringBuilder lines = new StringBuilder();
+        StringBuilder line = new StringBuilder();
 
         int number = 0;
         int left_or_right = 1;
-        for (int i = 0; i < asts.size(); i++) {
-            if (is_space(asts.get(i)) || (i == asts.size() - 1 && left_or_right > 0)) {
-                lines.append(asts.get(i).node_toString());
+        for (int i = 0; i < ast_list.size(); i++) {
+            if (is_space(ast_list.get(i)) || (i == ast_list.size() - 1 && left_or_right > 0)) {
+                line.append(ast_list.get(i).node_toString());
             } else {
-                lines.append(asts.get(i).node_toString(left_or_right = -left_or_right));
+                line.append(ast_list.get(i).node_toString(left_or_right = -left_or_right));
                 number++;//只有这种非空的才算入number里面
             }//第一次为-1，左
-            if (!is_space(asts.get(i)) &&
-                    i < asts.size() - 1 && !is_space(asts.get(i + 1))
+            if (!is_space(ast_list.get(i)) &&
+                    i < ast_list.size() - 1 && !is_space(ast_list.get(i + 1))
                     && (number & 1) == 1) {
-                lines.append("--^--");//-----------------------与下面对应
+                line.append("--^--");//-----------------------与下面对应，长度与[APP][Abs]一致
             } else {
-                lines.append("     ");//-----------------长度要和那个的一样
+                line.append("     ");//-----------------------与上面对应，长度与[APP][Abs]一致
             }
         }
 
@@ -152,25 +154,24 @@ public abstract class AST {
         //开始打印了
 
 
-        if(print_mode==0){
-
+        if(print_tree_mode==0){
 
         //1.要不要____/ \___
-        for (int i = 0; i < lines.length(); i++) {
-            if(i==0||i==lines.length()-1){
+        for (int i = 0; i < line.length(); i++) {
+            if(i==0||i==line.length()-1){
                 System.out.print(' ');
             }
-            else if (lines.charAt(i) == '-') {
-                  if (lines.charAt(i + 1) == '^') {
+            else if (line.charAt(i) == '-') {
+                  if (line.charAt(i + 1) == '^') {
                     System.out.print('/');
-                } else if (lines.charAt(i - 1) == '^') {
+                } else if (line.charAt(i - 1) == '^') {
                     System.out.print('\\');
-                } else if ( lines.charAt(i-1)=='-'&&lines.charAt(i+1)=='-'){
+                } else if ( line.charAt(i-1)=='-'&&line.charAt(i+1)=='-'){
                     System.out.print('_');
                 } else {
                     System.out.print(' ');
                 }
-            } else if (lines.charAt(i) == '^') {
+            } else if (line.charAt(i) == '^') {
                 System.out.print('^');//-----------   '^' , ' ' 随便了
             } else {
                 System.out.print(' ');
@@ -181,10 +182,10 @@ public abstract class AST {
 
 
   //2.要不要  /  \
-        for (int i = 0; i < lines.length(); i++) {
-            if (i >0 && lines.charAt(i) == '-' && lines.charAt(i-1) != '-' && lines.charAt(i-1)!= '^' ) {
+        for (int i = 0; i < line.length(); i++) {
+            if (i >0 && line.charAt(i) == '-' && line.charAt(i-1) != '-' && line.charAt(i-1)!= '^' ) {
                 System.out.print('/');
-            } else if (i <lines.length() && lines.charAt(i)=='-' &&lines.charAt(i+1)!='-' && lines.charAt(i+1)!= '^') {
+            } else if (i <line.length() && line.charAt(i)=='-' &&line.charAt(i+1)!='-' && line.charAt(i+1)!= '^') {
                 System.out.print('\\');
             } else {
                 System.out.print(' ');
@@ -195,20 +196,20 @@ public abstract class AST {
 
 
         //最后一行，比较简约
-        for (int i = 0; i < lines.length(); i++) {
-            if (lines.charAt(i) == '-' || lines.charAt(i) == '^') {
+        for (int i = 0; i < line.length(); i++) {
+            if (line.charAt(i) == '-' || line.charAt(i) == '^') {
                 System.out.print(' ');
             } else {
-                System.out.print(lines.charAt(i));
+                System.out.print(line.charAt(i));
             }
         }
         System.out.print('\n');
     }
-        if(print_mode==1) {
+        if(print_tree_mode==1) {
 
             //要不要那根竖起来的棍子
-            for (int i = 0; i < lines.length(); i++) {
-                if (lines.charAt(i) == '^') {//---------------------与上面对应
+            for (int i = 0; i < line.length(); i++) {
+                if (line.charAt(i) == '^') {//---------------------与上面对应
                     System.out.print('|');
                 } else {
                     System.out.print(' ');
@@ -216,16 +217,16 @@ public abstract class AST {
             }
             System.out.print('\n');
 
-            System.out.println(lines.toString());//还是就觉得这个舒服
+            System.out.println(line.toString());//还是就觉得这个舒服
         }
 
         ArrayList<AST> next_asts=new ArrayList<>();
         boolean to_continue=false;
-        for(AST i:asts){
+        for(AST i:ast_list){
             if(i instanceof Application){
                 to_continue=true;
-                next_asts.add(((Application) i).left_son);
-                next_asts.add(((Application) i).right_daughter);
+                next_asts.add(((Application) i).lhs);
+                next_asts.add(((Application) i).rhs);
             }
             else if(i instanceof Abstraction){
                 to_continue=true;
@@ -240,12 +241,12 @@ public abstract class AST {
 
 
         if(to_continue){
-            print_lines(next_asts,print_mode);
+            print_lines(next_asts,print_tree_mode);
         }
 
     }
 
-    private static boolean is_space(AST ast){
+    private static boolean is_space(AST ast){//指一个Identifier,里面的name是一串空格
         if(ast instanceof Identifier){
             if(((Identifier) ast).name.trim().equals("")){
                 return true;

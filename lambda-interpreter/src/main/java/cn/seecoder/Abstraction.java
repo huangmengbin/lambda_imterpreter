@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Abstraction extends AST {
+class Abstraction extends AST {
     Identifier param;//变量
     AST body;//表达式
 
@@ -12,6 +12,53 @@ public class Abstraction extends AST {
         param = p;
         body = b;
     }
+
+    public String toString(){
+            return "\\."+body.toString();
+    }
+
+    public String toString(int mode){
+        switch (mode){
+            case 1:
+                if(body instanceof Application){
+                    return "\\"+param.toString(mode)+"."+body.toString(mode)+"";
+                }
+            case 2:
+                return "\\"+param.toString(mode)+"."+body.toString(mode)+"";      //不太完整的括号
+            case 3:
+                return "(\\"+param.toString(mode)+"."+body.toString(mode)+")";//完完整整的括号
+            default:
+                this.change_to_seecoder(new HashMap<>());
+                return "\\."+body.toString();
+        }
+    }
+
+    public Lexer_Of_HMB toLexer(){
+        ArrayList<String>arrayList=new ArrayList<>();
+        arrayList.add("\\");
+        arrayList.add(param.name);
+        arrayList.add(".");
+        Lexer_Of_HMB lexer=new Lexer_Of_HMB(arrayList);
+        lexer.connect(body.toLexer());
+        lexer.add_a_parenthesis();
+        return lexer;
+    }
+
+
+    protected AST clone(){
+        return new Abstraction(param.clone(),body.clone());
+    }
+
+    public void change_to_seecoder(Map<String,Integer> map){
+        Map<String,Integer>map1=new HashMap<>();
+        for (String key :map.keySet()) {
+            map1.put(key,map.get(key)+1);
+        }
+        map1.put(param.name,0);
+        body.change_to_seecoder(map1);
+    }
+
+    //以下为规约---------------------------------
 
     public boolean find_and_B_change(){
         boolean have_found=false;
@@ -42,53 +89,10 @@ public class Abstraction extends AST {
         body.a_change(oldString,newString,should_replace);
     }
 
-    public String toString(){
-            return "\\."+body.toString();
-    }
-
-    public String toString(int mode){
-        switch (mode){
-            case 1:
-                if(body instanceof Application){
-                    return "\\"+param.toString(mode)+"."+body.toString(mode)+"";
-                }
-            case 2:
-                return "\\"+param.toString(mode)+"."+body.toString(mode)+"";      //不太完整的括号
-            case 3:
-                return "(\\"+param.toString(mode)+"."+body.toString(mode)+")";//完完整整的括号
-            default:
-                this.changeToSeecoder(new HashMap<>());
-                return "\\."+body.toString();
-        }
-    }
-
-    public Lexer_Of_HMB toLexer(){
-        ArrayList<String>arrayList=new ArrayList<>();
-        arrayList.add("\\");
-        arrayList.add(param.name);
-        arrayList.add(".");
-        Lexer_Of_HMB lexer=new Lexer_Of_HMB(arrayList);
-        lexer.connect(body.toLexer());
-        lexer.add_a_parenthesis();
-        return lexer;
-    }
 
 
-    protected AST clone(){
-        return new Abstraction(param.clone(),body.clone());
-    }
 
-    public void changeToSeecoder(Map<String,Integer> map){
-        Map<String,Integer>map1=new HashMap<>();
-        for (String key :map.keySet()) {
-            map1.put(key,map.get(key)+1);
-        }
-        map1.put(param.name,0);
-        body.changeToSeecoder(map1);
-    }
-
-
-    //以下打印树
+    //以下打印树------------------------------------------------------
     private final static String symbol="[Abs]";
     protected String node_toString(){
         StringBuilder result=new StringBuilder();

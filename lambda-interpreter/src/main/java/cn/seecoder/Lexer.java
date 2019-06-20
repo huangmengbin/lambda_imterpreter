@@ -1,8 +1,8 @@
 package cn.seecoder;
 
-public class Lexer extends Lexer_Of_HMB {
+class Lexer extends Lexer_Of_HMB {
 
-    Lexer(String source) {//没用用过的类
+    Lexer(String source) {//没用用过的类，仅仅是为了打印一个东西给seecoder，所有的lexer都写在它的父类里头
         source = source.trim();
         this.init(source);
         print_to_seecoder();//<-----------------提交前不能有注释
@@ -10,7 +10,6 @@ public class Lexer extends Lexer_Of_HMB {
         index = 0;
     }
     private void print_to_seecoder() {
-
         for (String tokenType:my_token) {
             switch (tokenType){
                 case lambda:

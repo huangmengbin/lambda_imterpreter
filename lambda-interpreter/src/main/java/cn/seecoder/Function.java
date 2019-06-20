@@ -24,6 +24,10 @@ abstract class Function {
                 define();
                 write(function_place);
                 break;
+            case "change":
+                change();
+                write(function_place);
+                break;
             case "check":
                 print();
                 break;
@@ -32,6 +36,8 @@ abstract class Function {
                 delete();
                 write(function_place);
                 break;
+            default:
+                System.out.println("unrecognized");
         }
 
     }
@@ -55,6 +61,7 @@ abstract class Function {
             System.out.println("尝试读取function文件时发生错误\n已恢复至默认模式");
         }
     }
+
     static void write(String function_place){
         try {
             FileWriter writer=new FileWriter(function_place);
@@ -72,14 +79,15 @@ abstract class Function {
         }
     }
 
-
     static private void define()throws Exception{
         Scanner in = new Scanner(System.in);
         System.out.print("number= ");
         int number1;
         try {
             number1 = in.nextInt();
+            in.nextLine();
             if(number1>key_value.size()/2-1){
+                System.out.println("默认：添加至末尾");
                 number1=key_value.size()/2-1;
             }
         }
@@ -87,7 +95,8 @@ abstract class Function {
             number1=key_value.size()/2-1;
             System.out.println("默认：添加至末尾");
         }
-        in.nextLine();
+
+
         System.out.print("Your function name is: ");
         String function_name;
         do {
@@ -96,14 +105,60 @@ abstract class Function {
                 throw new  Exception("函数名字不要超过20个字符");
             }
         }while (function_name.isEmpty());
+
         System.out.print("Your function define is: ");
         String function_define;
         do {
             function_define = in.nextLine().trim();
         }while (function_define.isEmpty());
+
         key_value.add(number1*2+2,function_define);
         key_value.add(number1*2+2,function_name);
         System.out.println("Success!");
+    }
+
+    static private void delete()throws Exception{
+        Scanner in = new Scanner(System.in);
+        System.out.print("number=");
+        try {
+            int number2 = in.nextInt();
+            key_value.remove(number2 * 2);
+            key_value.remove(number2 * 2);
+            System.out.println("Success!");
+        }
+        catch (Exception e){
+            throw new Exception("无法删除");
+        }
+
+    }
+
+    static private void change()throws Exception{
+        Scanner in = new Scanner(System.in);
+        System.out.print("number= ");
+        int number1;
+        try {
+            number1 = in.nextInt();
+            in.nextLine();
+            if(number1>key_value.size()/2-1  ||  number1 <0){
+                throw new ArrayIndexOutOfBoundsException("这样是会越界的！");
+            }
+        }
+        catch (ArrayIndexOutOfBoundsException e){
+            throw e;
+        }
+        catch (Exception e){
+            throw new Exception("无法修改");
+        }
+
+        System.out.print("Your function define is: ");
+        String function_define;
+        do {
+            function_define = in.nextLine().trim();
+        }while (function_define.isEmpty());
+
+        key_value.remove(number1*2+1);
+        key_value.add(number1*2+1,function_define);
+
     }
 
     static private void print(){
@@ -123,22 +178,6 @@ abstract class Function {
         return res.toString();
     }
 
-
-
-    static private void delete()throws Exception{
-        Scanner in = new Scanner(System.in);
-        System.out.print("number=");
-        try {
-            int number2 = in.nextInt();
-            key_value.remove(number2 * 2);
-            key_value.remove(number2 * 2);
-            System.out.println("Success!");
-        }
-        catch (Exception e){
-            throw new Exception("无法删除");
-        }
-
-    }
 
     private static ArrayList<String> init_key_value= new ArrayList<>(
             Arrays.asList(

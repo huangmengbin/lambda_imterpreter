@@ -31,6 +31,7 @@ class global {
             "   check:查看当前模式\n" +
             "function：修改或查看你的函数\n" +
             "   add：添加一个新的至指定位置\n" +
+            "   change：修改指定位置的函数\n"+
             "   delete：删除某个函数\n" +
             "   initial：还原成默认\n" +
             "   check：查看\n" +

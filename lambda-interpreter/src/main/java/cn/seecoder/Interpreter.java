@@ -16,6 +16,7 @@ public class Interpreter {//final模式，如果不需要git到seecoder可以加
         step=0;
         print_mode=0;
     }
+
     public Interpreter(Parser p,int print_mode,int tree_mode){
         myast = p.parse();
         step=0;
@@ -40,22 +41,23 @@ public class Interpreter {//final模式，如果不需要git到seecoder可以加
             total++;
         }
 
-        if(global.to_seecoder){//额。。。提交时还是要
+        if(global.to_seecoder){//额。。。提交时还是要改一下哎
             Map<String,Integer>map=new HashMap<>();
-            result.changeToSeecoder(map);
+            result.change_to_seecoder(map);
         }
 
         else {//额。。。提交时不能打印这个东东
             System.out.println("\nThe answer is:\n"+result.body.toString(print_mode));
             System.out.println("You can press Enter to return.");
 
-            after_B_change(result.body,total,tree_mode);
+            do_something_after_B_change(result.body,total,tree_mode);
 
         }
         return result.body;
     }
 
-    static void after_B_change(AST ast,int total,int tree_mode){
+    static void do_something_after_B_change(AST ast, int total, int tree_mode){
+        //完成规约之后所干的事
         String another_string;
         Scanner scanner=new Scanner(System.in);
 

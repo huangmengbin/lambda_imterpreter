@@ -20,29 +20,27 @@ public class Parser {
 
     AST parse(){//来构建树了
 
-
         try {
             AST ast = term(lexer);
 
-            if (global.to_seecoder) {
+            if (global.to_seecoder) {//为了 给输出德布鲁因式 作准备
                 Map<String, Integer> map = new HashMap<>();
-                ast.changeToSeecoder(map);
+                ast.change_to_seecoder(map);
             }
             return ast;
 
         }catch (Exception e){
             System.out.println("构建树时出错");
             e.printStackTrace();
+            return null;
         }
-        return null;
+
     }
 
     private AST term(Lexer_Of_HMB lexer)throws Exception{
 
-
-
         switch (lexer.getValue(0)) {
-            case left_parenthesis:          //这个效率很低的
+            case left_parenthesis:          //这个效率很低的，复杂度为O(n^2)，好在调用次数非常少
 
 //-------------------------------------------------------------------------------------
                         switch (lexer.getValue(1)) {

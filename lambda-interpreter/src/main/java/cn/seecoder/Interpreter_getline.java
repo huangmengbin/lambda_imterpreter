@@ -23,7 +23,7 @@ class Interpreter_getline extends Interpreter{
             if(!pause) {
 
                 if(print_mode ==0){
-                    result.changeToSeecoder(new HashMap<>());
+                    result.change_to_seecoder(new HashMap<>());
                 }
                 System.out.println(result.body.toString(print_mode)+"\n");//打印
 
@@ -106,7 +106,7 @@ class Interpreter_getline extends Interpreter{
         System.out.println("\nThe answer is:\n"+result.body.toString(print_mode)+"\n");//
         System.out.println("You can press Enter to return.");
 
-       after_B_change(result.body,total,tree_mode);
+       do_something_after_B_change(result.body,total,tree_mode);
 
         return result.body;
     }

@@ -42,7 +42,7 @@ public class Identifier extends AST {
         return new Lexer_Of_HMB(arrayList);
     }
 
-    public void changeToSeecoder(Map<String,Integer> map){
+    public void change_to_seecoder(Map<String,Integer> map){
         if (!map.containsKey(name)){
             value="free";//大概是这个意思吧
         }

@@ -11,10 +11,11 @@ public class Lexer_Of_HMB {
     static final String dot = global.dot;
 
     int index=0;
-    protected ArrayList<String> my_token = new ArrayList<>();
+    ArrayList<String> my_token = new ArrayList<>();
 
     Lexer_Of_HMB(String source) {
         this.init(source.trim());
+        ///////////////print_to_seecoder();//---------------------------------------------
         try {
             CheckLegal.check_tokens(my_token);
         }catch (Exception e){
@@ -26,6 +27,12 @@ public class Lexer_Of_HMB {
         my_token=full_parenthesis().my_token;//额 加全括号
         index = 0;
     }
+
+    Lexer_Of_HMB(ArrayList<String> my_token) {
+        index = 0;
+        this.my_token = my_token;
+    }
+
     Lexer_Of_HMB(){}//什么是构造器？？？
 
     void init(String trimed_sourse){
@@ -81,10 +88,10 @@ public class Lexer_Of_HMB {
     }
 
 
-    public String getValue(){
+    String getValue(){
         return my_token.get(this.index);
     }
-    public String getValue(int index){
+    String getValue(int index){
         return my_token.get(index);
     }
     int lenth() {
@@ -96,54 +103,52 @@ public class Lexer_Of_HMB {
 
 
 
-//--------------------------------下面都是加括号---------------------------------------
-    public int match(int left) {
+//--------------------------------下面都是加括号，复杂度是 O(n^2) ---------------------------------------
+    int match(int left) {//作用是：传进一个下标left,如果它对应了左括号，则返回与之匹配的右括号下标；否则，返回left
 
-    if (my_token.get(left).equals(lambda)||my_token.get(left).equals(right_parenthesis)||my_token.get(left).equals(dot)) {
-        System.out.println("wrong:"+my_token.get(left));
-    }
-
-    if( !  my_token.get(left).equals(left_parenthesis)){
-        return left;
-    }
-
-    int right = left - 1;
-    int number = 0;
-    do {
-        ++right;
-        if (my_token.get(right).equals(left_parenthesis)) {
-            number++;
-        } else if (my_token.get(right).equals(right_parenthesis)) {
-            number--;
+        if (my_token.get(left).equals(right_parenthesis)||my_token.get(left).equals(dot)) {
+            System.out.println("wrong in match:"+my_token.get(left));
         }
 
-    } while (number != 0);
-    return right;
-}
+        if( !  my_token.get(left).equals(left_parenthesis)){
+            return left;
+        }
 
-    public Lexer_Of_HMB(ArrayList<String> my_token) {
-        index = 0;
-        this.my_token = my_token;
+        int right = left - 1;
+        int number = 0;
+        do {
+            ++right;
+            if (my_token.get(right).equals(left_parenthesis)) {
+                number++;
+            } else if (my_token.get(right).equals(right_parenthesis)) {
+                number--;
+            }
+
+        } while (number != 0);
+        return right;
     }
 
-    public Lexer_Of_HMB subLexer(int left, int rihgt) {
+
+
+    Lexer_Of_HMB subLexer(int left, int rihgt) {
         ArrayList<String>temp=new ArrayList<>();
         temp.addAll (my_token.subList(left,rihgt));
         return new Lexer_Of_HMB(temp);
     }
 
-    public void add_a_parenthesis(){
+    void add_a_parenthesis(){//加一个括号
         my_token.add(0,left_parenthesis);
         my_token.add(right_parenthesis);
     }
 
-    public void connect(Lexer_Of_HMB a){
+    void connect(Lexer_Of_HMB a){
         this.my_token.addAll(a.my_token);
         this.index=0;
     }
 
-    protected Lexer_Of_HMB full_parenthesis() {//好吧 这才是真正的加括号
+    Lexer_Of_HMB full_parenthesis() {//好吧 这才是真正的加括号
         index=0;
+
         if(!getValue(0).equals(left_parenthesis)){
             if(lenth()==1) {
                 return this;//即只有一个LCID
@@ -159,7 +164,7 @@ public class Lexer_Of_HMB {
             index=1;
             if(getValue(1).equals(lambda)){
                 Lexer_Of_HMB a=this.subLexer(1,4);
-                Lexer_Of_HMB b=this.subLexer(4,this.lenth()-1);
+                Lexer_Of_HMB b=this.subLexer(4,this.lenth()-1);///
                 if(b.lenth()!=1 && !b.getValue(0).equals(left_parenthesis)) {
                     b.add_a_parenthesis();
                 }
@@ -186,4 +191,5 @@ public class Lexer_Of_HMB {
                 return a;
             }
         }
+
     }
